@@ -1,4 +1,4 @@
-**getopt**
+# **getopt**
 
 
 shellscript로 프로그램을 만들다 보면 실행 인자 및 옵션을 필요로 하는 경우가 많습니다.\
@@ -98,7 +98,7 @@ getopt_test.sh -m GET -u leo -fqvdg
 ---
 
 
-**getopts**
+# **getopts**
 
 **용도**
 
@@ -210,12 +210,94 @@ fi
 shift $(($OPTIND -1))
 printf "Remaining arguments are: %s\n" "$*"
 ```
- 
+
+
 ---
 
-**awk**
+
+# **sed**
+
+
+**sed란 무엇인가?**
+
+ 
+
+sed는 비 대화형 모드의 줄 단위 편집기라고 합니다. 
+
+vi 편집기처럼 직접 파일을 열어 고치지 않고 커맨드 창 또는 스크립트에서 동작을 하여 원하는 부분만 변경해준다는 특징이 있습니다.
+
+
+*동작원리*
+
+
+
+<img src="https://user-images.githubusercontent.com/94737280/142754266-f4d413bb-b151-45f7-b1d1-87d017b16177.png" width="30%" height="30%">
+
+**sed의 특징**
+
+
+sed는 쉘 또는 스크립트에서 파이프(|)와 같이 사용될 수 있는 명령어입니다.
+
+그리고 기본적으로 정규표현식이 사용가능하기 때문에 정규표현식을 알면 더 고급지게 sed를 이용할 수 있습니다.
+
+주의할 점은 정규표현식을 사용하기 때문에 특수문자 앞에 역 슬래시(\,＼)를 붙여주어야 합니다. \를 쓰면 리눅스에서는 역슬래시로 받아들입니다.
+
+예) 
+`
+sed 's/\$man/man/g' test.txt
+`
+
+**sed 옵션**
+
+|옵션|설명|
+|---|---|
+|e| sed를 사용하였을 때 출력되는 값을 보여줍니다. 이 옵션은 기본값으로 굳이 안 써도 되지만 다중 명령어를 쓸 때는 반드시 써야 합니다. 예) sed /man/p -e /girl/p 파일명: man과 girl이 들어있는 줄을 한번 더 출력|
+|n|특정 값이 들어간 줄만 출력해주는 기능입니다. 주로 p 명령어와 사용된다고 합니다.|
+|f|스크립트를 파일로부터 읽어들이며 명령어를 지정하는 명령어라고 하는데 거의 사용하지 않습니다.|
+
+
+**sed 명령어**
+
+
+|명령어|설명|
+|---|---|
+|a\ |해당 값이 있는 줄 다음에 입력|
+|i\ |줄 앞에 첨가 명령어|
+|c\ |해당 줄을 변경하는 명령어|
+|g|한 줄에 해당하는 값이 여러개 있을 경우에 모두 변경하는 명령어. 이 명령어를 해당 줄의 제일 앞에 내용만 변경됩니다.|
+|p|조건에 부합하는 라인을 출력하는 명령어|
+|s/orgin/change/|앞에 것을 뒤에 것으로 변경하는 명령어|
+
+
+**유용한 sed 이용법**
+
+- 공백줄제거하기
+
+`
+sed '/^$/d' 파일명
+`
+
+- 모든 줄마다 공백을 추가하기
+
+`
+sed 'a\\' 파일명
+`
+
+- 주석이 처리된 줄 모두삭제
+
+`
+sed '/^#/d' 파일명
+`
+
+
+
+---
+
+# **awk**
 
 **awk 명령어란?**
+
+
 awk 란 패턴 탐색과 처리를 위한 명령어로 간단하게 파일에서 결과를 추려내고 가공하여 원하는 결과물을 만들어내는 유틸리티입니다.
 
 즉 파일에서 패턴이 일치하는 행을 찾아서 지정한 조치를 수행해주는 명령어이다. awk 명령은 사용자가 정의한 명령어 집합을 이용하여 파일 집합과 사용자가 제공한 확장 표현식을 한번에 한 행씩 비교한 다음 확장 정규식과 일치하는 모든 행에 작용하여 특별한 작업을 해 준다.
@@ -300,5 +382,99 @@ pattern과 action에 작성되는 awk program 코드에는 다양한 표현식, 
 |출력 필드 너비 지정하기	|awk ‘{ printf “%-3s %-8s %-4s %-4s %-4s\n”, $1, $2, $3, $4, $5}’ [FILE]|
 |필드 중 최대 값 출력	|awk ‘{max = 0; for (i=3; i max) ? $i : max ; print max}’ [FILE]|
 
+**주요예제**
 
 
+**특정 Record를 검색하기 - if 구문**
+
+*~이상 , ~ 이하의 레코드 출력*
+
+
+만약 위의 파일에서 점수가 80점 이상인 사람들의 레코드를 알고 싶다면 어떻게 하면 좋을까요? 이거는 pattern을 써야할까요, action을 써야할까요? action에서는 if 구문이 존재합니다. 그래서 이렇게 사용하면 80점 이상인 record를 출력할 수 있습니다.
+
+`
+awk '{ if ( $5 >= 80 ) print ($0) }' ./awk_test_file.txt
+`
+
+```python
+name    phone           birth           sex     score
+reakwon 010-1234-1234   1981-01-01      M       100
+sim     010-4321-4321   1999-09-09      F       88
+```
+
+아래와 같은 구문으로도 사용할 수도 있습니다.
+
+`
+awk '$5 >= 80 { print $0 }' ./awk_test_file.txt
+`
+
+**내장함수**
+
+awk에는 여러가지 내장함수들이 존재합니다. 단어의 길이를 알아내려면 length함수, 단어의 부분단어를 추출하려면 substr함수를 사용할 수 있습니다. 아래의 awk 명령은 이름의 길이와 이름의 3글자까지 출력을 하는 명령입니다.
+
+`
+ awk '{ print ("name leng : " length($1), "substr(0,3) : " substr($1,0,3)) }' ./awk_test_file.txt
+ `
+ 
+```python
+name leng : 4 substr(0,3) : nam
+name leng : 7 substr(0,3) : rea
+name leng : 3 substr(0,3) : sim
+name leng : 4 substr(0,3) : nar
+name leng : 3 substr(0,3) : yut
+name leng : 3 substr(0,3) : kim
+name leng : 3 substr(0,3) : nam
+ 
+```
+
+**반복문**
+
+```python
+awk '{
+for(i=0;i<2;i++)
+ print( "for loop :" i "\t" $1, $2, $3)
+}' ./awk_test_file.txt
+```
+
+```python
+for loop :0     name phone birth
+for loop :1     name phone birth
+for loop :0     reakwon 010-1234-1234 1981-01-01
+for loop :1     reakwon 010-1234-1234 1981-01-01
+for loop :0     sim 010-4321-4321 1999-09-09
+for loop :1     sim 010-4321-4321 1999-09-09
+for loop :0     nara 010-1010-2020 1993-12-12
+for loop :1     nara 010-1010-2020 1993-12-12
+for loop :0     yut 010-2323-2323 1988-10-10
+for loop :1     yut 010-2323-2323 1988-10-10
+for loop :0     kim 010-1234-4321 1977-07-17
+for loop :1     kim 010-1234-4321 1977-07-17
+for loop :0     nam 010-4321-7890 1996-06-20
+for loop :1     nam 010-4321-7890 1996-06-20
+```
+
+**BEGIN, END pattern**
+
+
+BEGIN은 awk가 모든 레코드를 돌기 전에 한번 action을 수행하고 END는 모든 레코드를 다 돈 후에 마지막으로 정의한 action이 실행됩니다. 아래의 예에서 어떻게 사용되는지 살펴봅니다.
+
+
+```python
+ awk '
+> BEGIN {
+>  sum = 0
+>  cnt = -1
+> }
+>
+> {
+>  sum += $5
+>  cnt++
+> }
+>
+> END {
+>  avg = sum/cnt
+>  print ("sum :" sum ", average :" avg)
+> }' ./awk_test_file.txt
+```
+
+BEGIN에서는 초기화가 이루어지고, END에서는 결과를 출력해줍니다.
