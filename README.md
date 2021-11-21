@@ -411,6 +411,109 @@ lee     010-4949-4949   1988-09-30      F       80
 feng    010-1111-9999   1979-03-20      M       90
 ```
 
+**단어 치환(Substitute) - s (substitute)**
+
+특정 단어를 치환하려면 s명령을 이용하면 됩니다. 형식은 아래와 같습니다. 
+
+- 기본적인 특정단어 치환
+
+
+```
+s/old/new/g
+s/old/new/gi
+```
+
+단어 s는 substitute(치환)의 약자, 그리고 /로 구분하여 old는 단어를 치환할 문자열, new는 새롭게 치환한 문자열인데 비어있으면 그 문자열을 삭제한 효과를 가질 수 있습니다. g는 global의 약자로 전체에 적용됨을 의미합니다. 
+
+두번째의 i는 ignore case의 약자로 old의 단어를 검색할때 대소문자 구분하지 않겠다는 것을 의미합니다. 
+
+아래 명령의 결과를 보고 차이점을 확인해보세요.
+
+```
+sed -n -e 's/reakwon/reak/g' -e '2p' sed_test_file.txt
+sed -n -e 's/reakwoN/reak/g' -e '2p' sed_test_file.txt
+sed -n -e 's/reakwoN/reak/gi' -e '2p' sed_test_file.txt
+```
+
+- 특정 단어로 시작 혹은 끝나는 단어를 포함하는 라인의 문자열 치환
+
+특정단어로 시작하는 단어로 문자열을 치환하는 것도 가능합니다. 특정 단어로 시작하는 줄을 선택하려면 앞에 '^'문자를 사용하면 되죠. 사실 정규표현식을 아신다면 앞에 ^가 붙는다면 ^이후에 나오는 문자열로 시작되는 문자열들을 추출한다는 것을 아실겁니다. 사실 몰라도 외워서 아시면 됩니다. 단 많이 실수하시는 부분이 특정 단어로 시작하거나 끝나는 문자열이 아닌 줄(line)입니다.
+
+```
+Let it go, let it go.
+Can't hold it back anymore.
+Let it go, let it go.
+Turn away and slam the door.
+I don't care what they're going to say.
+Let the storm rage on.
+The cold never bothered me anyway.
+```
+
+`
+sed -n -e 's/^let/LET/gi' -e '1,$p' let_it_go.txt
+`
+
+반대로 끝나는 문자열은 끝에 $를 붙여줘서 검색하면 됩니다. Anyway. 으로 끝나는 줄의 Anyway를 대문자로 바꾸려면 아래와 같은 command를 사용하면 됩니다.
+
+
+`
+sed -n -e 's/anyway.$/ANYWAY/gi' -e '1,$p' let_it_go.txt
+`
+
+**문자열 추가 - a, i (append, insert)**
+
+
+문자열을 추가하는 방법에는 두 가지 정도가 존재합니다. 해당 문자열 아래에 추가하느냐(Append) 아니면 이 전 줄에 삽입하느냐(Insert)가 있는데요. 기본적인 형식은 아래의 command처럼 사용합니다.
+
+```
+/찾을 문자열/a\다음 출에 추가할 문자열
+/찾을 문자열/i\위에 삽입할 문자열
+```
+
+**특정 행의 내용을 전부 교체 - c (change)**
+
+c command를 이용해서 행의 내용을 바꿀 수 있습니다. command 형태는 이렇습니다.
+
+`
+/바꿀 행이 포함한 문자열/c\바꿀 행의 내용
+`
+ex)Let으로 시작하는 줄의 내용을 바꾸고 싶다면 어떻게 할까요? 우선 ^를 사용하여 Let으로 시작하는 줄들을 찾고 c 커맨드로 바꿔질 줄 내용을 입력해주시면 됩니다.
+
+`
+sed -n -e '/^Let/c\Let it go X2' -e '1,$p' let_it_go.txt
+`
+
+
+**특정 행에 파일의 내용을 추가 - r (read)**
+
+
+혹은 파일의 내용을 줄에다가 추가할 수도 있습니다. 여기 우리가 내용을 추가할 파일이 존재합니다.
+
+perfect.txt
+
+`
+PERFECT! EXCELLENT!
+`
+
+100으로 끝나는 줄에 저 텍스트 파일의 내용을 아랫줄에 첨가하려면 아래와 같은 명령을 사용하면 됩니다.
+
+`
+ sed -n -e '/100$/r perfect.txt' -e '1,$p' sed_test_file.txt
+`
+
+```
+name    phone           birth           sex     score
+reakwon 010-1234-1234   1981-01-01      M       100
+PERFECT! EXCELLENT!
+sim     010-4321-4321   1999-09-09      F       88
+nara    010-1010-2020   1993-12-12      M       20
+yut     010-2323-2323   1988-10-10      F       59
+kim     010-1234-4321   1977-07-17      M       69
+nam     010-4321-7890   1996-06-20      M       75
+sol     010-5911-1111   1976-10-12      F       60
+lee     010-4949-4949   1988-09-30      F       80
+feng    010-1111-9999   1979-03-20      M       90
+```
 
 ---
 
