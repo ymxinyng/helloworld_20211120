@@ -68,3 +68,26 @@ echo "O_VERBOSE=${O_VERBOSE}"
 echo "O_DEBUG=${O_DEBUG}"
 echo "O_SYSLOG=${O_SYSLOG}"
 ```
+
+**사용방법 확인**
+
+
+
+"-h 옵션"을 이용하여 사용법을 확인합니다.\
+`getopt_test.sh -h
+
+ 
+<img src ="https://user-images.githubusercontent.com/94737280/142752172-e4a02331-5332-4bf0-8d69-e96ef978e55f.png" width ="60%" height="60%" >
+
+
+
+**인자가 없는 옵션**
+getopt_test.sh -f -q -v -d -g
+
+
+getopt_test.sh -fqvdg
+
+getopt_test.sh -m GET -u leo -fqvdg
+
+
+<img src = "https://user-images.githubusercontent.com/94737280/142752303-cccb9d10-5ed1-42ef-a867-adaf003d34a4.png" width ="60% height ="60%" >
